@@ -2,10 +2,10 @@
     "kind": "Template",
     "apiVersion": "v1",
     "metadata": {
-        "name": "wordpress-classic-standalone",
+        "name": "wordpress",
 	"annotations": {
-            "openshift.io/display-name": "WordPress (Classic / Standalone)",
-	    "description": "Creates a WordPress installation with separate MySQL database instance. Requires that two persistent volumes be available. If a ReadWriteMany persistent volume type is available and used, WordPress can be scaled to multiple replicas and the deployment strategy switched to Rolling to permit rolling deployments on restarts.",
+            "openshift.io/display-name": "WordPress",
+	    "description": "Creates a WordPress installation with separate MySQL database instance.",
 	    "tags": "quickstart,php,wordpress",
             "iconClass": "icon-php"
 	}
@@ -19,23 +19,12 @@
             "required": true
         },
         {
-            "name": "QUICKSTART_REPOSITORY_URL",
-            "description": "The URL of the quickstart Git repository.",
-            "value": "https://github.com/openshift-evangelists/wordpress-quickstart",
+            "name": "WORDPRESS_REPOSITORY_URL",
+            "description": "The URL of the  Git repository.",
+            "value": "https://github.com/smmaster/oc-wp.git",
             "required": true
         },
-        {
-            "name": "WORDPRESS_VOLUME_SIZE",
-            "description": "Size of the persistent volume for Wordpress.",
-            "value": "1Gi",
-            "required": true
-        },
-        {
-            "name": "WORDPRESS_VOLUME_TYPE",
-            "description": "Type of the persistent volume for Wordpress.",
-            "value": "ReadWriteOnce",
-            "required": true
-        },
+      
         {
             "name": "WORDPRESS_DEPLOYMENT_STRATEGY",
             "description": "Type of the deployment strategy for Wordpress.",
@@ -117,7 +106,7 @@
                 "source": {
                     "type": "Git",
                     "git": {
-                        "uri": "${QUICKSTART_REPOSITORY_URL}"
+                        "uri": "${WORDPRESS_REPOSITORY_URL}"
                     }
                 },
                 "strategy": {
@@ -204,14 +193,7 @@
                         }
                     },
                     "spec": {
-                        "volumes": [
-                            {
-                                "name": "data",
-                                "persistentVolumeClaim": {
-                                    "claimName": "${APPLICATION_NAME}-wordpress-data"
-                                }
-                            }
-                        ],
+          
                         "containers": [
                             {
                                 "name": "wordpress",
@@ -282,12 +264,6 @@
                                         "name": "MYSQL_TABLE_PREFIX",
                                         "value": "wp_"
                                     }
-                                ],
-                                "volumeMounts": [
-                                    {
-                                        "name": "data",
-                                        "mountPath": "/opt/app-root/src"
-                                    }
                                 ]
                             }
                         ]
@@ -340,14 +316,7 @@
                         }
                     },
                     "spec": {
-                        "volumes": [
-                            {
-                                "name": "data",
-                                "persistentVolumeClaim": {
-                                    "claimName": "${APPLICATION_NAME}-mysql-data"
-                                }
-                            }
-                        ],
+               
                         "containers": [
                             {
                                 "name": "mysql",
@@ -390,12 +359,6 @@
                                     {
                                         "name": "MYSQL_PASSWORD",
                                         "value": "${DATABASE_PASSWORD}"
-                                    }
-                                ],
-                                "volumeMounts": [
-                                    {
-                                        "name": "data",
-                                        "mountPath": "/var/lib/mysql/data"
                                     }
                                 ]
                             }
@@ -476,46 +439,7 @@
                     "insecureEdgeTerminationPolicy": "Allow"
                 }
             }
-        },
-        {
-            "kind": "PersistentVolumeClaim",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APPLICATION_NAME}-mysql-data",
-                "labels": {
-                    "app": "${APPLICATION_NAME}"
-                }
-            },
-            "spec": {
-                "accessModes": [
-                    "ReadWriteOnce"
-                ],
-                "resources": {
-                    "requests": {
-                        "storage": "${DATABASE_VOLUME_SIZE}"
-                    }
-                }
-            }
-        },
-        {
-            "kind": "PersistentVolumeClaim",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APPLICATION_NAME}-wordpress-data",
-                "labels": {
-                    "app": "${APPLICATION_NAME}"
-                }
-            },
-            "spec": {
-                "accessModes": [
-                    "${WORDPRESS_VOLUME_TYPE}"
-                ],
-                "resources": {
-                    "requests": {
-                        "storage": "${WORDPRESS_VOLUME_SIZE}"
-                    }
-                }
-            }
         }
+
     ]
 }
