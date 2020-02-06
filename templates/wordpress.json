@@ -107,6 +107,7 @@
                     "type": "Git",
                     "git": {
                         "uri": "${WORDPRESS_REPOSITORY_URL}"
+                      }
                  },
                 "strategy": {
                     "type": "Source",
