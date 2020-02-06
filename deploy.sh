@@ -43,8 +43,8 @@ import_db(){
 
 ###################MAIN###################################
 
-#create_project trade
-#wait_for_build
+create_project trade
+wait_for_build
 WORDPRESS_URL=$(get_wordpress_host)
 import_db $WORDPRESS_URL
 echo "#############################################################################################"
