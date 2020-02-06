@@ -1,18 +1,24 @@
 #!/bin/bash
 
-
 set -x
 set -eo pipefail
+
+
+WORDPRESS_REPOSITORY_URL="https://github.com/smmaster/oc-wp.git"
+
 
 create_project(){
     project=$1
     oc new-project  $project
-    oc new-app templates/wordpress.json
+    oc new-app templates/wordpress.json  -p WORDPRESS_REPOSITORY_URL=$WORDPRESS_REPOSITORY_URL
 }
 
 start_build(){
 
 	oc start-build --from-dir=. wordpress  --follow
+}
+
+wait_for_build(){
         until oc get po|grep db|grep Running; do sleep 5; done
 }
 
@@ -37,9 +43,8 @@ import_db(){
 ###################MAIN###################################
 
 create_project trade
-start_build
 WORDPRESS_URL=$(get_wordpress_host)
 import_db $WORDPRESS_URL
-
+wait_for_build
 echo "#############################################################################################"
 echo  $WORDPRESS_URL
