@@ -19,7 +19,8 @@ start_build(){
 }
 
 wait_for_build(){
-        until oc get po|grep db|grep Running; do sleep 5; done
+        until oc get po|grep wordpress-db|grep 1/.*Running; do sleep 5; done
+        until oc get po|grep wordpress.*build  |grep  Completed; do sleep 5; done
 }
 
 get_wordpress_host(){
@@ -42,9 +43,9 @@ import_db(){
 
 ###################MAIN###################################
 
-create_project trade
+#create_project trade
+#wait_for_build
 WORDPRESS_URL=$(get_wordpress_host)
 import_db $WORDPRESS_URL
-wait_for_build
 echo "#############################################################################################"
-echo  $WORDPRESS_URL
+echo  $WORDPRESS_URL/trade
